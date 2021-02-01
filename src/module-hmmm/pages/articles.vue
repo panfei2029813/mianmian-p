@@ -1,9 +1,302 @@
 <template>
-  <div class='container'>面试技巧</div>
+  <div class="container">
+    <el-card class="box-card">
+      <!-- 头部 -->
+      <el-form ref="form" :model="form" label-width="80px">
+        <!-- 头部 -->
+        <el-row :gutter="20">
+          <!-- 输入框 -->
+          <el-col :span="6"
+            ><el-form-item label="关键字" class="input">
+              <el-input
+                placeholder="根据关键字搜索"
+                v-model="form.name"
+                @change="onInput"
+              ></el-input> </el-form-item
+          ></el-col>
+
+          <el-col :span="6"
+            ><el-form-item label="状态" class="input">
+              <el-select
+                v-model="value"
+                placeholder="请选择"
+                @change="selectChange"
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select> </el-form-item
+          ></el-col>
+          <!-- 输入框 -->
+          <!-- 按钮 -->
+          <el-col :span="3" style="text-align:right">
+            <el-row class="header-button">
+              <el-button @click="clearInput">清除</el-button>
+              <el-button type="primary" @click="onSearch">搜索</el-button>
+            </el-row>
+          </el-col>
+          <!-- 按钮 -->
+
+          <el-col :offset="6" :span="3" style="text-align:right">
+            <el-row class="header-button">
+              <el-button
+                type="success"
+                icon="el-icon-edit"
+                @click="onIsArticlesAddshow"
+              >
+                新增技巧
+              </el-button>
+            </el-row>
+          </el-col>
+        </el-row>
+        <!-- 头部 -->
+      </el-form>
+      <!-- 头部 -->
+      <el-row>
+        <el-col :span="24"
+          ><div class="grid-content-total bg-purple-dark">
+            <i class="el-icon-info"></i>
+            数据一共 {{ total }} 条
+          </div></el-col
+        >
+      </el-row>
+      <!-- 表格 -->
+      <el-table :data="tableData" style="width: 100%" ref="removeId">
+        <el-table-column type="index" width="50" label="序号">
+        </el-table-column>
+        <el-table-column prop="title" label="文章标题"> </el-table-column>
+        <el-table-column prop="visits" label="阅读数"> </el-table-column>
+        <el-table-column prop="username" label="录入人"> </el-table-column>
+        <el-table-column prop="state" label="状态">
+          <template slot-scope="scope"
+            >{{ scope.row.state ? '已启用' : '已禁用' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="address" label="操作" width="220px">
+          <template slot-scope="scope" class="change">
+            <el-button type="text" size="small" @click="onPreview(scope.row)"
+              >浏览</el-button
+            >
+            <el-button type="text" size="small" @click="onDisabled(scope.row)"
+              >{{ scope.row.state ? '禁用' : '启用' }}
+            </el-button>
+            <el-button
+              type="text"
+              size="small"
+              :disabled="!scope.row.state"
+              @click="onEditArticle(scope.row)"
+              >修改</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              @click="onRemoveRandoms(scope.row)"
+              :disabled="!scope.row.state"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 表格 -->
+      <el-dialog title="收货地址" :visible.sync="dialogTableVisible">
+        <question-page></question-page>
+      </el-dialog>
+      <!-- 分页 -->
+      <div class="block">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="query.page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="10"
+          layout="  prev, pager, next, sizes,jumper"
+          :total="total"
+        >
+        </el-pagination>
+      </div>
+      <!-- 分页 -->
+    </el-card>
+
+    <articles-preview
+      :isArticlePageShow.sync="isArticlesPreviewshow"
+      :thisRow="thisRow"
+    ></articles-preview>
+    <articles-add
+      :isArticleAddShow.sync="isArticlesAddshow"
+      :articls="articls"
+      :edit="edit"
+    ></articles-add>
+  </div>
 </template>
 
 <script>
-export default {}
+import { list, remove, detail } from '@/api/hmmm/articles'
+import questionPage from './question-page'
+import articlesPreview from '../components/articles-preview'
+import articlesAdd from '../components/articles-add'
+export default {
+  data() {
+    return {
+      isDisabled: true,
+      options: [
+        {
+          value: 1,
+          label: '已启用'
+        },
+        {
+          value: 0,
+          label: '已禁用'
+        }
+      ],
+      value: '',
+      form: {
+        name: ''
+      },
+      query: {
+        page: 1,
+        pagesize: 10,
+        keyword: '',
+        state: null
+      },
+      total: 0,
+      tableData: [],
+      dialogTableVisible: false,
+      isArticlesPreviewshow: false,
+      isArticlesAddshow: false,
+      thisRow: {},
+      articls: {},
+      edit: false
+    }
+  },
+  components: {
+    questionPage,
+    articlesPreview,
+    articlesAdd
+  },
+  created() {
+    this.loadList()
+  },
+  watch: {
+    isArticlesAddshow() {
+      this.loadList()
+    }
+  },
+  methods: {
+    clearInput() {
+      this.form.name = ''
+      this.value = null
+    },
+    async loadList() {
+      try {
+        const { data } = await list(this.query)
+        console.log(data, 321123)
+        this.total = data.counts
+        this.tableData = data.items
+      } catch (error) {
+        this.$message({
+          message: '亲！网页走丢了奥',
+          type: 'warning'
+        })
+      }
+    },
+
+    onRemoveRandoms(row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          try {
+            remove(row)
+            this.$message({
+              message: '恭喜你，删除成功了',
+              type: 'success'
+            })
+          } catch (error) {
+            this.$message({
+              message: '亲！删除失败了',
+              type: 'warning'
+            })
+          }
+          this.loadList()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    handleSizeChange(el) {
+      this.query.pagesize = el
+      this.loadList()
+    },
+    handleCurrentChange(el) {
+      this.query.page = el
+      this.loadList()
+    },
+    onInput() {
+      this.query.keyword = this.form.name
+    },
+    onSearch() {
+      this.loadList()
+    },
+    onPageShow() {
+      this.dialogTableVisible = true
+    },
+    onIsArticlesAddshow() {
+      this.isArticlesAddshow = true
+    },
+    onDisabled(el) {
+      console.log(el)
+      el.state = !el.state
+    },
+    selectChange(el) {
+      this.query.state = el
+    },
+    onPreview(row) {
+      this.isArticlesPreviewshow = true
+      this.thisRow = row
+    },
+    async onEditArticle(row) {
+      const { data } = await detail(row)
+      this.articls = data
+      this.isArticlesAddshow = true
+      this.edit = true
+    }
+  }
+}
 </script>
 
-<style scoped lang='less'></style>
+<style scoped lang="less">
+.container {
+  padding: 20px 10px 50px;
+  .grid-content-total {
+    color: #666;
+    background-color: #f4f4f5;
+    padding: 8px 16px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  .block {
+    float: right;
+  }
+  .questionIDs {
+    color: blue;
+    cursor: pointer;
+  }
+  /deep/.cell {
+    .el-button {
+      border: none;
+      span {
+        display: inline-block;
+      }
+    }
+  }
+}
+</style>
