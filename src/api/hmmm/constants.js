@@ -94,3 +94,15 @@ export const publishType = [
     label: '已下架'
   }
 ]
+// 录入人
+export const editor = [
+  {
+    value: 1,
+    label: '超级管理员'
+  },
+  {
+    value: 2,
+    label: '一般小菜比'
+  }
+
+]
