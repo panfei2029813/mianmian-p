@@ -377,10 +377,44 @@
         </el-pagination>
       </div>
     </el-card>
+>>>>>>> 06743ea1b99bcb79601238e6fdf288ab44946325
   </div>
 </template>
 
 <script>
+<<<<<<< HEAD
+export default {
+  props:['previewData','dialogVisible'],
+  data(){
+    return {
+        flag: false, //视频显示区域
+    }
+  },
+  methods:{
+    // 关闭
+    dialogVisibles(){
+      this.$emit('dialogVisible',false)
+    },
+    // 视频播放
+    initVideo() {
+      this.flag = true;
+      //初始化视频方法
+      let myPlayer = this.$video(myVideo, {
+      
+        controls: true,
+        //自动播放属性,muted:静音播放
+        autoplay: "muted",
+        //建议浏览器是否应在<video>加载元素后立即开始下载视频数据。
+        preload: "auto",
+        //设置视频播放器的显示宽度（以像素为单位）
+        width: "400px",
+        //设置视频播放器的显示高度（以像素为单位）
+        height: "300px",
+      });
+    },
+  }
+};
+=======
 import { simple as dirSimple } from '@/api/hmmm/directorys.js'
 import { simple as subSimple } from '@/api/hmmm/subjects.js'
 import { list, remove, choiceAdd } from '@/api/hmmm/questions.js'
@@ -527,6 +561,7 @@ export default {
     parseTime
   }
 }
+>>>>>>> 06743ea1b99bcb79601238e6fdf288ab44946325
 </script>
 
 <style scoped lang="less">
