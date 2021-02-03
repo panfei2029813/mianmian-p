@@ -119,6 +119,7 @@
 <script>
 import { list, update, remove } from '@/api/hmmm/subjects'
 import { parseTime } from '@/utils/index.js'
+
 export default {
   data() {
     return {

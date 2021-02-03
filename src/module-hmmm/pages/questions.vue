@@ -377,6 +377,10 @@
         </el-pagination>
       </div>
     </el-card>
+    <question-preview
+      :previewDig="previewDig"
+      :previewMsg="previewMsg"
+    ></question-preview>
   </div>
 </template>
 
@@ -393,6 +397,7 @@ import {
   direction,
   editor
 } from '@/api/hmmm/constants.js'
+import questionPreview from '../components/questions-preview'
 export default {
   data() {
     return {
@@ -449,7 +454,10 @@ export default {
         choiceState: 0,
         id: 0
       },
-      total: 0
+      total: 0,
+      // 预览显示
+      previewDig: false,
+      previewMsg: {}
     }
   },
   created() {
@@ -483,7 +491,8 @@ export default {
     },
     // 预览
     onPre(el) {
-      console.log(el.choiceState)
+      this.previewDig = true
+      this.previewMsg = el
     },
     // 修改按钮
     onModification() {
@@ -525,6 +534,9 @@ export default {
   filters: {
     html2Text,
     parseTime
+  },
+  components: {
+    questionPreview
   }
 }
 </script>
