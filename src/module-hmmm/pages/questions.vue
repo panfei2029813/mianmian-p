@@ -269,8 +269,10 @@
         "
         >
         </el-table-column>
-        <el-table-column prop="subject" label="学科"> </el-table-column>
-        <el-table-column prop="catalog" label="目录"> </el-table-column>
+        <el-table-column prop="subject" label="学科" width="80">
+        </el-table-column>
+        <el-table-column prop="catalog" label="目录" width="120">
+        </el-table-column>
         <el-table-column prop="question" label="题干">
           <template slot-scope="scope">
             {{ scope.row.question | html2Text }}
@@ -468,7 +470,6 @@ export default {
       const { data } = await dirSimple(this.query)
       const tagData = await tagsSimple(this.query)
       this.tags = tagData.data
-      console.log(this.tags)
       this.seconItems = data
     },
     hasCity(el) {
