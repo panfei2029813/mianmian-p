@@ -1,4 +1,5 @@
 <template>
+<<<<<<< Updated upstream
   <div class='container'>
     <div class="container">
     <!-- 试题预览对话框 -->
@@ -88,11 +89,57 @@
         <el-button type="primary" @click="dialogVisibles">关闭</el-button>
       </span>
     </el-dialog>
+=======
+  <div class="container">
+    <div class="title">
+      <span>
+        <template>
+          <span v-if="preview.questionType === '1'">【题型】：单选</span>
+          <span v-else-if="preview.questionType === '2'">【题型】：多选</span>
+          <span v-else>【题型】：简答</span>
+        </template>
+      </span>
+      <span>{{ '【编号】：' + preview.id }}</span>
+      <span
+        ><template>
+          <span v-if="preview.difficulty === '1'">【难度】：简单</span>
+          <span v-else-if="preview.difficulty === '2'">【难度】：一般</span>
+          <span v-else>【难度】：困难</span>
+        </template></span
+      >
+      <span>{{ '【标签】：' + preview.tags }}</span>
+      <span>{{ '【学科】：' + preview.subject }}</span>
+      <span>{{ '【目录】：' + preview.catalog }}</span>
+      <span>{{ '【方向】：' + preview.direction }}</span>
+    </div>
+    <hr />
+    <div class="question">
+      【题干】：
+      <div class="question-container" v-html="preview.question"></div>
+    </div>
+    <button @click="getRandoms()">555</button>
+>>>>>>> Stashed changes
   </div>
 </template>
 
 <script>
-export default {}
+import { randoms } from '@/api/hmmm/questions'
+export default {
+  props: {
+    preview: {
+      type: Object,
+      require: true
+    }
+  },
+  async getRandoms() {
+    try {
+      const { data } = await randoms()
+      console.log(data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+}
 </script>
 
-<style scoped lang='less'></style>
+<style scoped lang="less"></style>

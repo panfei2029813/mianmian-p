@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 引入 card 样式 -->
     <el-card class="box-card elCard">
-      <div slot="header" class="breadGps">
+      <div slot="header" :class="isShow ? '':'breadGps'">
         <!-- 面包屑导航 -->
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item>学科管理</el-breadcrumb-item>
@@ -37,7 +37,8 @@
               type="text"
               icon="el-icon-back"
               size="medium"
-              @click="backToSubject"
+              :class="isShow ? '':'breadGps'"
+              @click="$router.back()"
             >
               返回学科</el-button
             >
@@ -218,6 +219,7 @@ export default {
       tableKey: 0,
       total: null,
       parms: {},
+      isShow:false,
       changeDialogVisible: false,
       addDialogVisible: false,
       formChange: {
@@ -231,6 +233,11 @@ export default {
         page: 1,
         pagesize: 10,
       },
+      subject:{
+        page: 1,
+        pagesize: 10,
+        subjectID:null
+      },
       requestParameters: {
         page: 1,
         pagesize: 10,
@@ -240,7 +247,14 @@ export default {
     }
   },
   created() {
+    
+    if(this.$route.query.id){
+      this.subject.subjectID = this.$route.query.id
+      this.isShow = true
+      this.getList(this.subject)
+    }else{
     this.getList(this.pagination)
+    }
     this.getSubjectSimple()
   },
   filters: {
@@ -249,9 +263,6 @@ export default {
     }
   },
   methods: {
-    onSubmit() {
-    
-    },
     clearAll() {
      this.requestParameters = {}
      this.getList(this.pagination)
@@ -259,9 +270,6 @@ export default {
     onSearch() {
        this.getList(this.requestParameters)
       console.log(this.requestParameters)
-    },
-    backToSubject() {
-      console.log(123)
     },
     addNewCatalog() {
       console.log(456)
@@ -289,9 +297,6 @@ export default {
     // 每页显示信息条数
     handleSizeChange(val) {
       this.pagination.pagesize = val
-      // if (this.pagination.page === 1) {
-      //   this.getList(this.pagination)
-      // }
        this.getList(this.pagination)
     },
     // 进入某一页
@@ -405,9 +410,9 @@ export default {
 <style scoped lang="less">
 .elCard {
   margin: 10px;
-  // .breadGps {
-  //   display: none;
-  // }
+  .breadGps {
+    display: none;
+  }
   .rightBtn {
     float: right;
   }
