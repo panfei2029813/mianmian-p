@@ -1,5 +1,4 @@
 <template>
-  <!-- 需求3.1 基础布局 -->
   <div class="questions-container">
     <div class="app-container">
       <el-card shadow="never">
@@ -454,7 +453,7 @@ export default {
 
     async submitForm (formName) { // 提交表单
       this.$refs[formName].validate(async (valid) => { 
-        if (valid) { 
+        if (valid) { // 执行提交
           try {
             const formData = this.qsNewForm
             formData.tags = formData.tags.join(',') // 将标签的数组转为字符串,并赋值给from数据
