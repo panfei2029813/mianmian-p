@@ -21,5 +21,8 @@ module.exports = {
       .end()
       .use('file-loader')
       .loader('file-loader')
-  }
+  },
+  devServer:{
+    open:true
+}
 }

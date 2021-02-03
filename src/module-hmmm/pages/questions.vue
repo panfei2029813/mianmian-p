@@ -378,7 +378,7 @@
       </div>
     </el-card>
     <question-preview
-      :previewDig="previewDig"
+      :previewDig.sync="previewDig"
       :previewMsg="previewMsg"
     ></question-preview>
   </div>

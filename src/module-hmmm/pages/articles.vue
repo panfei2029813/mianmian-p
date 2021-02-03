@@ -85,6 +85,7 @@
             <span
               v-show="Boolean(scope.row.videoURL)"
               class="el-icon-film filmSpan"
+              @click="onVideoShow(scope.row.videoURL)"
             ></span>
           </template>
         </el-table-column>
@@ -160,6 +161,11 @@
       :edit="edit"
     ></articles-add>
     <!-- 文章增添组件 -->
+    <div class="playbig" v-show="vedioShow">
+      <video :src="videoURL" class="videoplay" :controls="controls"></video>
+
+      <div class="close" @click="close">关</div>
+    </div>
   </div>
 </template>
 
@@ -207,7 +213,10 @@ export default {
       isArticlesAddshow: false,
       thisRow: {}, // 当前行信息(组件传值)
       articls: {}, // 获取的文章信息
-      edit: false // 判断是不是编辑状态
+      edit: false, // 判断是不是编辑状态
+      videoURL: '',
+      vedioShow: false,
+      controls: false
     }
   },
 
@@ -329,6 +338,17 @@ export default {
       this.articls = data
       this.isArticlesAddshow = true
       this.edit = true
+    },
+
+    onVideoShow(el) {
+      this.vedioShow = true
+      this.videoURL = el
+      this.controls = true
+    },
+
+    close() {
+      this.vedioShow = false
+      this.controls = false
     }
   }
 }
@@ -366,6 +386,32 @@ export default {
     cursor: pointer;
     font-size: 20px;
     vertical-align: middle;
+  }
+  .playbig {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #6666;
+    cursor: pointer;
+    z-index: 1999999;
+  }
+  .videoplay {
+    width: 800px;
+  }
+  .close {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    color: #fff;
+
+    text-align: center;
+    line-height: 50px;
   }
 }
 </style>

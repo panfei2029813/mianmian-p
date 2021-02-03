@@ -44,6 +44,9 @@ export default {
       type: [Object]
     }
   },
+  filters: {
+    parseTimeByString
+  },
 
   data() {
     return {
