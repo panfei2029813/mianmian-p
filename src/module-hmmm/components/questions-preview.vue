@@ -1,70 +1,117 @@
 <template>
   <div class="container">
-    <el-dialog title="题目预览" :visible.sync="dialogVisible" width="60%">
-      <!-- <div>
-        <el-row style="margin-bottom:20px">
-          <el-col :span="6">
-            <div>
-              【题型】：
-              <span v-if="previewData.questionType == 1">简单</span>
-              <span v-if="previewData.questionType == 2">多选</span>
-              <span v-if="previewData.questionType == 3">单选</span>
-            </div>
-          </el-col>
-          <el-col :span="6">
-            <div>【编号】：{{ previewData.id }}</div>
-          </el-col>
-          <el-col :span="6">
-            <div>
-              【难度】：
-              <span v-if="previewData.difficulty == 1">简单</span>
-              <span v-if="previewData.difficulty == 2">一般</span>
-              <span v-if="previewData.difficulty == 3">困难</span>
-            </div>
-          </el-col>
-          <el-col :span="6">
-            <div>【标签】：{{ previewData.tags }}</div>
-          </el-col>
-        </el-row>
-        <el-row style="margin-bottom: 20px">
-          <el-col :span="6">
-            <div>【学科】：{{ previewData.subjectName }}</div>
-          </el-col>
-          <el-col :span="6">
-            <div>【目录】：{{ previewData.directoryName }}</div>
-          </el-col>
-          <el-col :span="6">
-            <div>【方向】：{{ previewData.direction }}</div>
-          </el-col>
-        </el-row>
-        <hr />
-        <div>
-          【题干】：
-          <p style="color:blue" v-html="previewData.question"></p>
-          <div v-if="previewData.questionType == 3">
-            <span>单选题选项：(一下选中的选项为正确答案)</span>
-            <el-radio
-              v-for="(item1, index) in previewData.options"
-              :key="index"
-              v-model="radio"
-              :label="item1.isRight"
-              >{{ item1.title }}</el-radio
-            >
-          </div>
-          <div v-if="previewData.questionType == 2">
-            <div>多选题选项：(一下选中的选项为确定答案)</div>
-            <el-checkbox
-              v-for="(item2, index) in previewData.options"
-              :key="index"
-            />
-          </div>
-        </div>
-      </div> -->
+    <el-dialog title="题目预览" :visible.sync="dialogVisible" width="70%">
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <span
+            >【题型】:
+            <span v-if="questionsDetail.questionType == 1">单选</span>
+            <span v-else-if="questionsDetail.questionType == 2">多选</span>
+            <span v-else>简答</span>
+            题</span
+          >
+        </el-col>
+        <el-col :span="6"
+          ><span>【编号】: {{ questionsDetail.id }}</span></el-col
+        >
+        <el-col :span="6">
+          <span
+            >【难度】:
+            <span v-if="questionsDetail.difficulty == 1">简单</span>
+            <span v-else-if="questionsDetail.difficulty == 2">一般</span>
+            <span v-else>困难</span>
+          </span>
+        </el-col>
+        <el-col :span="6"
+          ><span>【标签】: {{ questionsDetail.tags }}</span></el-col
+        >
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"
+          ><span>【学科】: {{ questionsDetail.subjectName }}</span></el-col
+        >
+        <el-col :span="6"
+          ><span>【目录】: {{ questionsDetail.directoryName }}</span></el-col
+        >
+        <el-col :span="6"
+          ><span>【方向】: {{ questionsDetail.direction }}</span></el-col
+        >
+        <el-col :span="6"><span></span></el-col>
+      </el-row>
+      <el-divider></el-divider>
+      <p>【题干】</p>
+      <p>
+        <span v-html="questionsDetail.question"></span>
+      </p>
+      <p>
+        <span v-if="questionsDetail.questionType == 1"
+          >单选题选项:(一下选中的选项为正确选项)</span
+        >
+        <span v-else-if="questionsDetail.questionType == 2"
+          >多选题选项:(一下选中的选项为正确选项)</span
+        >
+        <span v-else></span>
+      </p>
+      <!-- 单选 -->
+      <div v-if="questionsDetail.questionType == 1">
+        <el-radio
+          v-for="item in questionsDetail.options"
+          :key="item.id"
+          :value="isRight"
+          :label="item.isRight"
+          style="width: 100%; margintop: 20px"
+        >
+          {{ item.code }}. {{ item.title }}
+        </el-radio>
+      </div>
+      <!-- 多选 -->
+      <div v-if="questionsDetail.questionType == 2">
+        <el-checkbox-group :value="checkList">
+          <el-checkbox
+            v-for="item in questionsDetail.options"
+            :key="item.id"
+            :value="isRight"
+            :label="item.isRight"
+            style="width: 100%; margintop: 20px"
+          >
+            {{ item.code }}. {{ item.title }}
+          </el-checkbox>
+        </el-checkbox-group>
+      </div>
+      <el-divider></el-divider>
+      <span
+        >【参考答案】:
+        <el-button type="danger" @click="openVideo">视频答案预览</el-button>
+      </span>
+      <p>
+        <video
+          v-if="videoFlag"
+          controls="controls"
+          style="background-color: rgb(0, 0, 0);
+            width: 100%;
+            height: 100%;
+            display: block;"
+          :src="questionsDetail.videoURL"
+        ></video>
+      </p>
+      <el-divider></el-divider>
+      <div>
+        <span>【答案解析】:</span>
+        <span v-html="questionsDetail.answer"></span>
+      </div>
+      <el-divider></el-divider>
+      <span> 【题目备注】:{{ questionsDetail.remarks }} </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import { randoms } from '@/api/hmmm/questions'
+import { detail } from '@/api/hmmm/questions'
 export default {
   props: {
     preview: {
@@ -82,20 +129,33 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      questionsDetail: [],
+      videoFlag: false,
+      isRight: 1,
+      checkList: [1]
     }
   },
-  async getRandoms() {
-    try {
-      const { data } = await randoms(this.previewMsg)
-      console.log(data)
-    } catch (err) {
-      console.log(err)
+  created() {},
+  methods: {
+    async getRandoms() {
+      try {
+        const { data } = await detail(this.previewMsg)
+        this.questionsDetail = data
+        console.log(this.questionsDetail)
+        console.log(123)
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    openVideo() {
+      this.videoFlag = true
     }
   },
   watch: {
     previewDig() {
       this.dialogVisible = this.previewDig
+      this.getRandoms()
     },
     dialogVisible() {
       if (!this.dialogVisible) {

@@ -639,15 +639,10 @@
         <!-- /分页 -->
       </div>
       <!-- 试题预览对话框 -->
-      <el-dialog title="试题预览" :visible.sync="dialogVisible" width="30%">
-        <questions-preview :preview="preview"></questions-preview>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false"
-            >确 定</el-button
-          >
-        </span>
-      </el-dialog>
+      <question-preview
+      :previewDig.sync="dialogVisible"
+      :previewMsg="preview"
+    ></question-preview>
       <!-- /试题预览对话框 -->
       <!-- 审核对话框 -->
       <el-dialog title="题目审核" :visible.sync="chkDialogVisible" width="30%" style="padding: 20px 20px">
@@ -686,11 +681,11 @@ import { list } from '@/api/hmmm/directorys'
 import { list as tagList } from '@/api/hmmm/tags'
 import { simple as userSimple } from '@/api/base/users'
 import { parseTime, html2Text } from '../../utils/index'
-import QuestionsPreview from '../components/questions-preview.vue'
+import questionPreview from '../components/questions-preview.vue'
 import { provinces, citys } from '../../api/hmmm/citys'
 import loginSocialSigninVue from '../../module-dashboard/components/loginSocialSignin.vue'
 export default {
-  components: { QuestionsPreview },
+  components: { questionPreview },
   data() {
     return {
       form: {

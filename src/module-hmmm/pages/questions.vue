@@ -493,6 +493,7 @@ export default {
     onPre(el) {
       this.previewDig = true
       this.previewMsg = el
+      console.log(this.previewMsg.id);
     },
     // 修改按钮
     onModification() {
@@ -507,7 +508,7 @@ export default {
     async choose(el) {
       this.chooseQuery.id = el.id
       el.choiceState = 1
-      console.log(el)
+      // console.log(el)
       await choiceAdd(this.chooseQuery)
     },
     onSearch() {
