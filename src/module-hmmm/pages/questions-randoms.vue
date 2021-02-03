@@ -46,7 +46,7 @@
         </el-table-column>
         <el-table-column prop="questionIDs" label="题目编号">
           <template slot-scope="scope">
-            <div @click="onPageShow">
+            <div @click="onPageShow(scope.row)">
               <div
                 class="questionIDs"
                 v-for="(item, index) in scope.row.questionIDs"
@@ -75,9 +75,12 @@
         </el-table-column>
       </el-table>
       <!-- 表格 -->
-      <el-dialog title="收货地址" :visible.sync="dialogTableVisible">
-        <question-page></question-page>
-      </el-dialog>
+      <questions-preview
+        title="收货地址"
+        :previewMsg="previewMsg"
+        :previewDig.sync="dialogTableVisible"
+      >
+      </questions-preview>
       <!-- 分页 -->
       <div class="block">
         <el-pagination
@@ -98,7 +101,7 @@
 
 <script>
 import { randoms, removeRandoms } from '@/api/hmmm/questions'
-import questionPage from './question-page'
+import questionsPreview from '../components/questions-preview'
 export default {
   data() {
     return {
@@ -112,11 +115,12 @@ export default {
       },
       total: 0,
       tableData: [],
-      dialogTableVisible: false
+      dialogTableVisible: false,
+      previewMsg: {}
     }
   },
   components: {
-    questionPage
+    questionsPreview
   },
   created() {
     this.loadRandoms()
@@ -168,7 +172,9 @@ export default {
       this.loadRandoms()
       this.form.name = ''
     },
-    onPageShow() {
+    onPageShow(el) {
+      console.log(el, 'el')
+      this.previewMsg = el
       this.dialogTableVisible = true
     }
   }

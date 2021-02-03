@@ -139,10 +139,11 @@ export default {
   created() {},
   methods: {
     async getRandoms() {
+      console.log(this.previewMsg, 11111111111111)
       try {
         const { data } = await detail(this.previewMsg)
         this.questionsDetail = data
-        console.log(this.questionsDetail)
+        console.log(this.questionsDetail, 321231231)
         console.log(123)
       } catch (err) {
         console.log(err)
